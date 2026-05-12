@@ -308,37 +308,48 @@
     const NORMAL_PER_MEGA_TWO = NORMAL_PER_MEGA_ONE * MEGA_ONE_PER_MEGA_TWO;
 
     function getValue(id) {
-        return parseFloat(document.getElementById(id).value) || 0;
+    return Math.floor(parseFloat(document.getElementById(id).value) || 0);
     }
 
     function formatAmount(num) {
-        return "x" + Math.floor(num).toLocaleString();
+    return "x" + num.toLocaleString();
     }
 
     function calculateDice() {
-        const normal = getValue('normalDice');
-        const gold = getValue('goldDice');
-        const megaOne = getValue('megaOneDice');
-        const megaTwo = getValue('megaTwoDice');
+    const normal = getValue('normalDice');
+    const gold = getValue('goldDice');
+    const megaOne = getValue('megaOneDice');
+    const megaTwo = getValue('megaTwoDice');
 
-        const totalNormal =
-            normal +
-            (gold * NORMAL_PER_GOLD) +
-            (megaOne * NORMAL_PER_MEGA_ONE) +
-            (megaTwo * NORMAL_PER_MEGA_TWO);
+    let totalNormal =
+    normal +
+    (gold * NORMAL_PER_GOLD) +
+    (megaOne * NORMAL_PER_MEGA_ONE) +
+    (megaTwo * NORMAL_PER_MEGA_TWO);
 
-        document.getElementById('normalResult').innerText = formatAmount(totalNormal);
-        document.getElementById('goldResult').innerText = formatAmount(totalNormal / NORMAL_PER_GOLD);
-        document.getElementById('megaOneResult').innerText = formatAmount(totalNormal / NORMAL_PER_MEGA_ONE);
-        document.getElementById('megaTwoResult').innerText = formatAmount(totalNormal / NORMAL_PER_MEGA_TWO);
+    const upgradedMegaTwo = Math.floor(totalNormal / NORMAL_PER_MEGA_TWO);
+    totalNormal %= NORMAL_PER_MEGA_TWO;
 
-        document.getElementById('inputPage').style.display = 'none';
-        document.getElementById('resultsPage').style.display = 'block';
+    const upgradedMegaOne = Math.floor(totalNormal / NORMAL_PER_MEGA_ONE);
+    totalNormal %= NORMAL_PER_MEGA_ONE;
+
+    const upgradedGold = Math.floor(totalNormal / NORMAL_PER_GOLD);
+    totalNormal %= NORMAL_PER_GOLD;
+
+    const upgradedNormal = totalNormal;
+
+    document.getElementById('normalResult').innerText = formatAmount(upgradedNormal);
+    document.getElementById('goldResult').innerText = formatAmount(upgradedGold);
+    document.getElementById('megaOneResult').innerText = formatAmount(upgradedMegaOne);
+    document.getElementById('megaTwoResult').innerText = formatAmount(upgradedMegaTwo);
+
+    document.getElementById('inputPage').style.display = 'none';
+    document.getElementById('resultsPage').style.display = 'block';
     }
 
     function goBack() {
-        document.getElementById('resultsPage').style.display = 'none';
-        document.getElementById('inputPage').style.display = 'block';
+    document.getElementById('resultsPage').style.display = 'none';
+    document.getElementById('inputPage').style.display = 'block';
     }
 </script>
 
