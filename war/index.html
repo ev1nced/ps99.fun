@@ -270,14 +270,12 @@ function calculateDice() {
     const megaOne = getValue('megaOneDice');
     const megaTwo = getValue('megaTwoDice');
 
-    // Convert everything into normal dice value
     let totalNormal =
         normal +
         (gold * NORMAL_PER_GOLD) +
         (megaOne * NORMAL_PER_MEGA_ONE) +
         (megaTwo * NORMAL_PER_MEGA_TWO);
 
-    // Upgrade into highest possible dice
     const upgradedMegaTwo = Math.floor(totalNormal / NORMAL_PER_MEGA_TWO);
     totalNormal %= NORMAL_PER_MEGA_TWO;
 
@@ -289,24 +287,26 @@ function calculateDice() {
 
     const upgradedNormal = totalNormal;
 
-    // Calculate crafting costs
-    const goldCrafts =
-        upgradedGold +
-        (upgradedMegaOne * GOLD_PER_MEGA_ONE) +
-        (upgradedMegaTwo * GOLD_PER_MEGA_ONE * MEGA_ONE_PER_MEGA_TWO);
+    const craftedGold =
+        Math.floor(normal / NORMAL_PER_GOLD);
 
-    const megaOneCrafts =
-        upgradedMegaOne +
-        (upgradedMegaTwo * MEGA_ONE_PER_MEGA_TWO);
+    const totalGoldAvailable =
+        gold + craftedGold;
 
-    const megaTwoCrafts = upgradedMegaTwo;
+    const craftedMegaOne =
+        Math.floor(totalGoldAvailable / GOLD_PER_MEGA_ONE);
+
+    const totalMegaOneAvailable =
+        megaOne + craftedMegaOne;
+
+    const craftedMegaTwo =
+        Math.floor(totalMegaOneAvailable / MEGA_ONE_PER_MEGA_TWO);
 
     const totalCost =
-        (goldCrafts * COST_NORMAL_TO_GOLD) +
-        (megaOneCrafts * COST_GOLD_TO_MEGA_ONE) +
-        (megaTwoCrafts * COST_MEGA_ONE_TO_MEGA_TWO);
+        (craftedGold * COST_NORMAL_TO_GOLD) +
+        (craftedMegaOne * COST_GOLD_TO_MEGA_ONE) +
+        (craftedMegaTwo * COST_MEGA_ONE_TO_MEGA_TWO);
 
-    // Display results
     document.getElementById('normalResult').innerText = formatAmount(upgradedNormal);
     document.getElementById('goldResult').innerText = formatAmount(upgradedGold);
     document.getElementById('megaOneResult').innerText = formatAmount(upgradedMegaOne);
