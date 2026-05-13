@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dice Value Calculator</title>
 
-<!-- Discord / social preview embed tags. These work after the page is hosted online. -->
 <meta property="og:title" content="Dice Value Calculator">
 <meta property="og:description" content="Open a shared Dice Value Calculator result.">
 <meta property="og:type" content="website">
@@ -308,15 +307,12 @@ function setMessage(text) {
 }
 
 function encodeShareData(data) {
-    // Packs all values into a much shorter random-looking string.
-    // Example result: 7clzi2f9w
 
     const values = [data.n, data.g, data.m1, data.m2];
 
     let packed = 0n;
 
     for (const value of values) {
-        // Each number gets 16 bits (max 65535)
         packed = (packed << 16n) | BigInt(Math.min(value, 65535));
     }
 
@@ -364,7 +360,6 @@ function buildShareUrl() {
 async function shareCurrentValues() {
     const shareUrl = buildShareUrl();
 
-    // This tries the modern phone/browser share popup first.
     if (navigator.share) {
         try {
             await navigator.share({
@@ -374,11 +369,9 @@ async function shareCurrentValues() {
             });
             return;
         } catch (error) {
-            // If the user cancels the share popup, we will copy instead.
         }
     }
 
-    // Fallback: copy the link to clipboard.
     try {
         await navigator.clipboard.writeText(shareUrl);
         setMessage('Share link copied!');
@@ -391,8 +384,6 @@ function loadValuesFromUrl() {
     const params = new URLSearchParams(window.location.search);
     const sharedCode = params.get('s');
 
-    // New cleaner share format, for example:
-    // https://ps99.fun/dice?s=eyJuIjoxMCwiZyI6NSwibTEiOjAsIm0yIjoxfQ
     if (sharedCode) {
         const data = decodeShareData(sharedCode);
 
@@ -407,7 +398,6 @@ function loadValuesFromUrl() {
         return;
     }
 
-    // Old readable format still works, just in case someone already shared one.
     const normal = params.get('normal');
     const gold = params.get('gold');
     const mega1 = params.get('mega1');
