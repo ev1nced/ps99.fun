@@ -8,7 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap" rel="stylesheet">
 
 <style>
-
 body {
     font-family: 'Fredoka', sans-serif;
     background: linear-gradient(135deg, #0f172a, #1e3a8a);
@@ -35,14 +34,8 @@ body {
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 h1 {
@@ -109,13 +102,13 @@ button {
 
 .results-page {
     display: none;
-    width: 760px;
+    width: 900px;
     max-width: 100%;
 }
 
 .cards {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 14px;
 }
 
@@ -176,7 +169,6 @@ button {
     color: #64748b;
     text-align: center;
 }
-
 </style>
 </head>
 
@@ -199,6 +191,14 @@ button {
         <div class="input-group">
             <label>Gold Dice</label>
             <input type="number" id="goldDice" min="0" value="0">
+        </div>
+    </div>
+
+    <div class="dice-input">
+        <img src="https://raw.githubusercontent.com/ev1nced/ps99.fun/refs/heads/main/img/bluedice.png">
+        <div class="input-group">
+            <label>Blue Dice</label>
+            <input type="number" id="blueDice" min="0" value="0">
         </div>
     </div>
 
@@ -237,6 +237,11 @@ button {
         </div>
 
         <div class="card">
+            <div class="amount" id="blueResult">x0</div>
+            <img src="https://raw.githubusercontent.com/ev1nced/ps99.fun/refs/heads/main/img/bluedice.png">
+        </div>
+
+        <div class="card">
             <div class="amount" id="megaOneResult">x0</div>
             <img src="https://raw.githubusercontent.com/ev1nced/ps99.fun/refs/heads/main/img/md1dice.png">
         </div>
@@ -260,16 +265,18 @@ button {
 <div class="footer">made by evinced</div>
 
 <script>
-
 const NORMAL_PER_GOLD = 5;
-const GOLD_PER_MEGA_ONE = 30;
+const GOLD_PER_BLUE = 15;
+const BLUE_PER_MEGA_ONE = 2;
 const MEGA_ONE_PER_MEGA_TWO = 3;
 
 const COST_NORMAL_TO_GOLD = 100;
-const COST_GOLD_TO_MEGA_ONE = 100000;
+const COST_GOLD_TO_BLUE = 800000;
+const COST_BLUE_TO_MEGA_ONE = 100000;
 const COST_MEGA_ONE_TO_MEGA_TWO = 300000;
 
-const NORMAL_PER_MEGA_ONE = NORMAL_PER_GOLD * GOLD_PER_MEGA_ONE;
+const NORMAL_PER_BLUE = NORMAL_PER_GOLD * GOLD_PER_BLUE;
+const NORMAL_PER_MEGA_ONE = NORMAL_PER_BLUE * BLUE_PER_MEGA_ONE;
 const NORMAL_PER_MEGA_TWO = NORMAL_PER_MEGA_ONE * MEGA_ONE_PER_MEGA_TWO;
 
 function getValue(id) {
@@ -284,12 +291,14 @@ function calculateDice() {
 
     const normal = getValue('normalDice');
     const gold = getValue('goldDice');
+    const blue = getValue('blueDice');
     const megaOne = getValue('megaOneDice');
     const megaTwo = getValue('megaTwoDice');
 
     let totalNormal =
         normal +
         (gold * NORMAL_PER_GOLD) +
+        (blue * NORMAL_PER_BLUE) +
         (megaOne * NORMAL_PER_MEGA_ONE) +
         (megaTwo * NORMAL_PER_MEGA_TWO);
 
@@ -299,28 +308,34 @@ function calculateDice() {
     const upgradedMegaOne = Math.floor(totalNormal / NORMAL_PER_MEGA_ONE);
     totalNormal %= NORMAL_PER_MEGA_ONE;
 
+    const upgradedBlue = Math.floor(totalNormal / NORMAL_PER_BLUE);
+    totalNormal %= NORMAL_PER_BLUE;
+
     const upgradedGold = Math.floor(totalNormal / NORMAL_PER_GOLD);
     totalNormal %= NORMAL_PER_GOLD;
 
     const upgradedNormal = totalNormal;
 
     const craftedGold = Math.floor(normal / NORMAL_PER_GOLD);
-
     const totalGoldAvailable = gold + craftedGold;
 
-    const craftedMegaOne = Math.floor(totalGoldAvailable / GOLD_PER_MEGA_ONE);
+    const craftedBlue = Math.floor(totalGoldAvailable / GOLD_PER_BLUE);
+    const totalBlueAvailable = blue + craftedBlue;
 
+    const craftedMegaOne = Math.floor(totalBlueAvailable / BLUE_PER_MEGA_ONE);
     const totalMegaOneAvailable = megaOne + craftedMegaOne;
 
     const craftedMegaTwo = Math.floor(totalMegaOneAvailable / MEGA_ONE_PER_MEGA_TWO);
 
     const totalCost =
         (craftedGold * COST_NORMAL_TO_GOLD) +
-        (craftedMegaOne * COST_GOLD_TO_MEGA_ONE) +
+        (craftedBlue * COST_GOLD_TO_BLUE) +
+        (craftedMegaOne * COST_BLUE_TO_MEGA_ONE) +
         (craftedMegaTwo * COST_MEGA_ONE_TO_MEGA_TWO);
 
     document.getElementById('normalResult').innerText = formatAmount(upgradedNormal);
     document.getElementById('goldResult').innerText = formatAmount(upgradedGold);
+    document.getElementById('blueResult').innerText = formatAmount(upgradedBlue);
     document.getElementById('megaOneResult').innerText = formatAmount(upgradedMegaOne);
     document.getElementById('megaTwoResult').innerText = formatAmount(upgradedMegaTwo);
 
@@ -334,7 +349,6 @@ function goBack() {
     document.getElementById('resultsPage').style.display = 'none';
     document.getElementById('inputPage').style.display = 'block';
 }
-
 </script>
 
 </body>
